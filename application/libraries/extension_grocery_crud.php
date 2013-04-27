@@ -1,13 +1,22 @@
-<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed'); 
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+/**
+ * Extension of grocery_CRUD
+ *
+ * A proper way of extending Grocery CRUD
+ *
+ * @package    	Extension of grocery_CRUD
+ * @copyright  	-
+ * @license    	-
+ * @version    	1.0
+ * @author     	-
+ */
 class Extension_grocery_CRUD extends grocery_CRUD{
-	protected $ci=null;
-	protected $extension_extras=array();
+	protected $_ci = null;
 
 	public function __construct(){
 		parent::__construct();
-		$this->ci = &get_instance();
-		$this->extensions_dir='/assets/grocery_crud_extension';
+		$this->_ci = &get_instance();
 	}
 
 	/* Extra field types Functions
@@ -19,12 +28,12 @@ class Extension_grocery_CRUD extends grocery_CRUD{
     				$this->field_type($field,'dropdown', array('1' => 'Yes', '0' => 'No'));
     				break;
 
-    			/* 
-    			 * If you want to add another field type 
-    			 * you just set the name in the case and 
-    			 * the functions inside it 
+    			/*
+    			 * If you want to add another field type
+    			 * you just set the name in the case and
+    			 * the functions inside it
     			 */
-    			
+
     			default:
     				# code...
     				break;
@@ -43,12 +52,12 @@ class Extension_grocery_CRUD extends grocery_CRUD{
     }
 
     public function soft_delete_me($primary_key){
-    	return $this->ci->db->update($this->basic_db_table,array('deleted' => '1'),array($this->get_primary_key() => $primary_key));
+    	return $this->_ci->db->update($this->basic_db_table,array('deleted' => '1'),array($this->get_primary_key() => $primary_key));
     }
     /************************************************/
-    
 
-    /* APPEND FIELD Functions 
+
+    /* APPEND FIELD Functions
 	 * 	Append at the End. Eliminate repetitions.
      */
     public function append_fields(){
@@ -93,12 +102,12 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	
+
 
 	/********************************************************/
 
 
-	/* Prepend FIELD Functions 
+	/* Prepend FIELD Functions
 	 * 	Append at the Beginning. Eliminate repetitions.
      */
 	public function prepend_fields()
@@ -147,7 +156,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 	/********************************************************/
 
 
-	/* Append After FIELD Functions 
+	/* Append After FIELD Functions
 	 * 	Append after first field in parameters. Eliminate repetitions.
      */
 
@@ -166,7 +175,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 
 			$this->append_add_fields_after($after_field,$args);
 			$this->append_edit_fields_after($after_field,$args);
-			
+
 		}
 
 		return $this;
@@ -231,7 +240,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 	/********************************************************/
 
 
-	/* APPEND COLUMNS Function 
+	/* APPEND COLUMNS Function
 	 * 	Append at the End. Eliminate repetitions.
      */
 	public function append_columns(){
@@ -246,7 +255,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	/* APPEND COLUMNS Function 
+	/* APPEND COLUMNS Function
 	 * 	Append at the Beginning. Eliminate repetitions.
      */
 	public function prepend_columns(){
@@ -264,7 +273,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
     /***************************************/
 
 
-	/* REMOVE FIELD Functions 
+	/* REMOVE FIELD Functions
 	 * 	Removes the fields passed as parameters from the actual field list
      */
     public function remove_fields(){
@@ -311,7 +320,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 	/********************************************************/
 
 
-	/* REMOVE COLUMNS Function 
+	/* REMOVE COLUMNS Function
 	 * 	Removes the columns passed as parameters from the actual columns list
      */
 	public function remove_columns(){
@@ -335,13 +344,13 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 
     public function basic_gc_config($table_name, $content_public_name, $template='twitter-bootstrap'){
     	$this->set_theme($template);
-	    
+
 	    $this->set_table($table_name)
         	->set_subject($content_public_name);
 
 		$this->set_soft_delete();
 
-		$this->columns('name','created','public');	
+		$this->columns('name','created','public');
 
 		$this->field_type_ext('public','yes_no');
 
