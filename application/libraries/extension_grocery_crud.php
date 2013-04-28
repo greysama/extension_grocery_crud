@@ -12,12 +12,23 @@
  * @author     	-
  */
 class Extension_grocery_CRUD extends grocery_CRUD{
-	protected $_ci = null;
-	protected $extension_extras=array(); //Re-Added for the soft_delete functionality
+	protected $_ci = null;	
+	protected $extension_extras=array();
+	protected $callback_before_insert_ext=array();
+	protected $callback_after_insert_ext=array();
+	protected $callback_insert_ext=array();
+	protected $callback_before_update_ext=array();
+	protected $callback_after_update_ext=array();
+	protected $callback_update_ext=array();
+	protected $callback_before_delete_ext=array();
+	protected $callback_after_delete_ext=array();
+	protected $callback_delete_ext=array();
+	protected $callback_post_render=array();
 
 	public function __construct(){
 		parent::__construct();
 		$this->_ci = &get_instance();
+
 	}
 
 	/* Extra field types Functions
@@ -53,7 +64,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
     		$field='deleted';
     	}
     	$this->extension_extras['soft_delete']['field']=$field;
-	$this->extension_extras['soft_delete']['deleted_value']=$deleted_value;
+		$this->extension_extras['soft_delete']['deleted_value']=$deleted_value;
     	$this->callback_delete(array($this,'soft_delete_me'));
     }
 
@@ -82,8 +93,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function append_add_fields()
-	{
+	public function append_add_fields()	{
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -96,8 +106,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function append_edit_fields()
-	{
+	public function append_edit_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -118,8 +127,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 	/* Prepend FIELD Functions
 	 * 	Append at the Beginning. Eliminate repetitions.
      */
-	public function prepend_fields()
-	{
+	public function prepend_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -133,8 +141,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function prepend_add_fields()
-	{
+	public function prepend_add_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -147,8 +154,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function prepend_edit_fields()
-	{
+	public function prepend_edit_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -189,8 +195,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function append_add_fields_after()
-	{
+	public function append_add_fields_after(){
 		$args = func_get_args();
 
 		if(func_num_args ()>1){
@@ -217,8 +222,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function append_edit_fields_after()
-	{
+	public function append_edit_fields_after(){
 		$args = func_get_args();
 
 		if(func_num_args ()>1){
@@ -298,8 +302,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function remove_add_fields()
-	{
+	public function remove_add_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -312,8 +315,7 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
-	public function remove_edit_fields()
-	{
+	public function remove_edit_fields(){
 		$args = func_get_args();
 
 		if(isset($args[0]) && is_array($args[0]))
@@ -343,6 +345,190 @@ class Extension_grocery_CRUD extends grocery_CRUD{
 		return $this;
 	}
 
+
+    /***************************************/
+
+
+	/* Extended Callback Functions
+	 * 	Replace the standar callbacks so you can queue many of them
+     */
+
+
+	/*****  INSERT  ******/
+	public function callback_before_insert($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_before_insert_ext[] = $callback;
+			if($this->callback_before_insert == null){
+				$this->callback_before_insert = array($this,'extended_callback_before_insert');
+			}
+		}else{
+			parent::callback_before_insert($callback);
+		}
+		
+		return $this;
+	}
+
+	protected function extended_callback_before_insert($post_array){
+		foreach ($this->callback_before_insert_ext as $key => $callback) {
+			if(is_array($post_array)){
+				$post_array = call_user_func($callback, $post_array);
+			}
+		}
+		
+		return $post_array;
+	}
+
+	public function callback_after_insert($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_after_insert_ext[] = $callback;
+			if($this->callback_after_insert == null){
+				$this->callback_after_insert = array($this,'extended_callback_after_insert');
+			}
+		}else{
+			parent::callback_after_insert($callback);
+		}
+
+		return $this;
+	}
+
+	protected function extended_callback_after_insert($post_array,$primary_key){
+		$continue=1;
+		foreach ($this->callback_after_insert_ext as $key => $callback) {
+			if($continue){
+				$continue = call_user_func($callback, $post_array,$primary_key);
+			}
+		}
+
+		return $post_array;
+	}
+	
+	/*****  UPDATE  ******/
+	public function callback_before_update($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_before_update_ext[] = $callback;
+			if($this->callback_before_update == null){
+				$this->callback_before_update = array($this,'extended_callback_before_update');
+			}
+		}else{
+			parent::callback_before_update($callback);
+		}
+		
+		return $this;
+	}
+
+	protected function extended_callback_before_update($post_array, $primary_key){
+		foreach ($this->callback_before_update_ext as $key => $callback) {
+			if(is_array($post_array)){
+				$post_array = call_user_func($callback, $post_array, $primary_key);
+			}
+		}
+		
+		return $post_array;
+	}
+
+	public function callback_after_update($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_after_update_ext[] = $callback;
+			if($this->callback_after_update == null){
+				$this->callback_after_update = array($this,'extended_callback_after_update');
+			}
+		}else{
+			parent::callback_after_update($callback);
+		}
+
+		return $this;
+	}
+
+	protected function extended_callback_after_update($post_array,$primary_key){
+		$continue=1;
+		foreach ($this->callback_after_update_ext as $key => $callback) {
+			if($continue){
+				$continue = call_user_func($callback, $post_array,$primary_key);
+			}
+		}
+
+		return $continue;
+	}
+
+
+	/*****  DELETE  ******/
+	public function callback_before_delete($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_before_delete_ext[] = $callback;
+			if($this->callback_before_delete == null){
+				$this->callback_before_delete = array($this,'extended_callback_before_delete');
+			}
+		}else{
+			parent::callback_before_delete($callback);
+		}
+		
+		return $this;
+	}
+
+	protected function extended_callback_before_delete($primary_key){
+		$continue=1;
+		foreach ($this->callback_before_delete_ext as $key => $callback) {
+			if($continue){
+				$continue = call_user_func($callback, $primary_key);
+			}
+		}
+		
+		return $continue;
+	}
+
+	public function callback_after_delete($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_after_delete_ext[] = $callback;
+			if($this->callback_after_delete == null){
+				$this->callback_after_delete = array($this,'extended_callback_after_delete');
+			}
+		}else{
+			parent::callback_after_delete($callback);
+		}
+
+		return $this;
+	}
+
+	protected function extended_callback_after_delete($primary_key){
+		$continue=1;
+		foreach ($this->callback_after_delete_ext as $key => $callback) {
+			if($continue){
+				$continue = call_user_func($callback, $primary_key);
+			}
+		}
+
+		return $continue;
+	}
+
+	public function callback_post_render($callback = null,$override_all=0){
+		if(!$override_all){
+			$this->callback_post_render[] = $callback;
+		}else{
+			$this->callback_post_render = array();
+			$this->callback_post_render[] = $callback;
+		}
+
+		return $this;
+	}
+
+
+	protected function post_render(){
+		$output=$this->get_layout();
+
+		if(count($this->callback_post_render)){
+			foreach ($this->callback_post_render as $key => $callback) {
+				$output = call_user_func($callback, $output);
+			}
+		}
+
+		return $output;
+	}
+
+	public function render(){
+		parent::render();
+
+		return $this->post_render();
+	}
 
     /***************************************/
     /***************************************/
