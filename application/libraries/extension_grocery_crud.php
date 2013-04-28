@@ -13,7 +13,7 @@
  */
 class Extension_grocery_CRUD extends grocery_CRUD{
 	protected $_ci = null;
-	protected $extension_extras=array();
+	protected $extension_extras=array(); //Re-Added for the soft_delete functionality
 
 	public function __construct(){
 		parent::__construct();
