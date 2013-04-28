@@ -69,6 +69,38 @@ function prepend_columns($columns, [$columns2, ...]):
 function remove_columns($columns, [$columns2, ...]):
  - Removes the columns passed as parameters from the columns list (if they are setted).
  
+
+function callback_before_insert(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+function callback_after_insert(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+function callback_before_update(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+function callback_after_update(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+function callback_before_delete(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+function callback_after_delete(array($this,'function_name'),[$override_all=0]):
+- Same as GC original if override_all is set to 1. Else (default) adds the function to a callback array. The setted callbacks run one after the other in the order they where setted.
+
+
+function callback_post_render(array($this,'function_name'),[$override_all=0]):
+- Adds a callback function that runs right after the render() function.
+ - Example: 
+ 		$gc->callback_post_render(array($this,'edit_body'));
+
+   function edit_body($output) {
+ 		 $output->output.='Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+
+			return $output;
+		}
+
+
 -------------------------------------
  
 Why should I use this?
