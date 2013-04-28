@@ -13,6 +13,7 @@
  */
 class Extension_grocery_CRUD extends grocery_CRUD{
 	protected $_ci = null;
+	protected $extension_extras=array();
 
 	public function __construct(){
 		parent::__construct();
@@ -47,12 +48,19 @@ class Extension_grocery_CRUD extends grocery_CRUD{
      * When is called, overrides the default delete function with another that only sets a field named 'deleted' to 1.
      */
 
-    public function set_soft_delete(){
+    public function set_soft_delete($field='deleted', $deleted_value=1){
+    	if(!$field){
+    		$field='deleted';
+    	}
+    	$this->extension_extras['soft_delete']['field']=$field;
+	$this->extension_extras['soft_delete']['deleted_value']=$deleted_value;
     	$this->callback_delete(array($this,'soft_delete_me'));
     }
 
     public function soft_delete_me($primary_key){
-    	return $this->_ci->db->update($this->basic_db_table,array('deleted' => '1'),array($this->get_primary_key() => $primary_key));
+    	$field=$this->extension_extras['soft_delete']['field'];
+    	$value=$this->extension_extras['soft_delete']['deleted_value'];
+    	return $this->_ci->db->update($this->basic_db_table,array($field => $value),array($this->get_primary_key() => $primary_key));
     }
     /************************************************/
 
