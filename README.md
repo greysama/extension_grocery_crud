@@ -10,10 +10,11 @@ function field_type_ext( $field, $type, [$extras]):
  The idea it's to provide a clean and easy way to include personalized and recurrent field_types for the community... maybe join all the field_type extensions and plugins in just one...
  
  
-function set_soft_delete(): 
- - Get's no parameters. Overrides the delete function with a soft delete function (table column 'deleted' setted to 1)
- 
- 
+function set_soft_delete([$database_field], [$deteled_value]): 
+ - Overrides the delete function with a soft delete function (by default: table column 'deleted' setted to 1).
+   If $database_field is set, it uses that one instead of 'deleted'
+   If $deleted_value is set, it uses that insead of 1.
+
  
 function append_fields($field, [$field2, ...]):
  - Same as fields() from GC with the difference that this one adds the fields passed by parameter to the end of the fields list (auto-eliminates duplicates).
